@@ -1,0 +1,9 @@
+checkpoints/
+deepfashion/**/
+deepfashion/pose_estimator.h5
+deepfashion/vgg19-dcbb9e9d.pth
+fashion/**/
+fashion_data/**/
+results/
+env/
+.vscode/
