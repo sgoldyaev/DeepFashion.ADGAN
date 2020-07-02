@@ -166,7 +166,7 @@ def contextual_similarity(inputs, batch_size=32, style_layers=('r32', 'r42')):
     # vgg pretrained.
     vgg = VGGModule('max').cuda()
     vgg.train(False)
-    vgg.load_state_dict(torch.load('/mnt/cephfs_new_wj/lab_ad_idea/maoyiming/data/vgg_conv.pth'))
+    vgg.load_state_dict(torch.load('./deepfashion/vgg_conv.pth'))
     loss_layer = CXLoss().cuda()
     cx = 0.0
     dataloader_ = torch.utils.data.DataLoader(inputs, batch_size=batch_size)
