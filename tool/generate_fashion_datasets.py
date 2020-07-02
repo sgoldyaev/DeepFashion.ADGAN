@@ -47,7 +47,7 @@ def make_dataset(dir):
 		for fname in fnames:
 			if is_image_file(fname):
 				path = os.path.join(root, fname).replace('./', '')
-				path_names = path.split('\\') 
+				path_names = path.split(os.path.sep) 
 				# path_names[2] = path_names[2].replace('_', '')
 				path_names[3] = path_names[3].replace('_', '')
 				path_names[4] = path_names[4].split('_')[0] + "_" + "".join(path_names[4].split('_')[1:])
