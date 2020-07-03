@@ -1,11 +1,12 @@
-checkpoints/
+checkpoints/*
 deepfashion/**/
 deepfashion/pose_estimator.h5
 deepfashion/vgg19-dcbb9e9d.pth
 deepfashion/vgg_conv.pth
 fashion/**/
 fashion_data/**/
-results/
+user_data/*
+results/*
 env/
 .vscode/
 */__pycache__/*

@@ -33,7 +33,7 @@ def args():
 
     parser.add_argument("--display_ratio", default=1, type=int,  help='Number of epochs between ploting')
     parser.add_argument("--start_epoch", default=0, type=int, help='Start epoch for starting from checkpoint')
-    parser.add_argument("--pose_estimator", default='pose_estimator.h5',
+    parser.add_argument("--pose_estimator", default='./deepfashion/pose_estimator.h5',
                             help='Pretrained model for cao pose estimator')
 
     parser.add_argument("--images_for_test", default=12000, type=int, help="Number of images for testing")
@@ -57,7 +57,7 @@ def args():
     parser.add_argument('--use_dropout_test', default=0, type=int,
                         help='To use dropout when generate images')
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
 
     args.images_dir_train = 'data/' + args.dataset + '-dataset/train'
     args.images_dir_test = 'data/' + args.dataset + '-dataset/test'
