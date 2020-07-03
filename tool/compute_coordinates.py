@@ -1,7 +1,7 @@
 import os
 import numpy as np
+import gc
 
-from keras import models
 import skimage.transform as st
 import pandas as pd
 from tqdm import tqdm
@@ -12,9 +12,17 @@ from scipy.ndimage import gaussian_filter
 from . import cmd
 from . import pose_utils
 
-import tensorflow.compat.v1 as tf
+def computeR(input_folder, img_list, output_path):
+    import multiprocessing
+    training_process = multiprocessing.Process(target=compute, args=[input_folder, img_list, output_path])
+    training_process.start()
+    #get_message_from_training_process(...)
+    training_process.join()
 
 def compute(input_folder, img_list, output_path):
+    import tensorflow.compat.v1 as tf
+    import keras
+    from keras import models
     tf.disable_v2_behavior()
 
     args = cmd.args()
@@ -227,3 +235,6 @@ def compute(input_folder, img_list, output_path):
 
         print ("%s: %s: %s" % (image_name, str(list(pose_cords[:, 0])), str(list(pose_cords[:, 1]))), file=result_file)
         result_file.flush()
+
+    del model
+    gc.collect()

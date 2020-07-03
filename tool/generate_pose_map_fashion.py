@@ -6,8 +6,8 @@ import os
 MISSING_VALUE = -1
 # fix PATH
 img_dir = './deepfashion'
-annotations_file = os.path.join(img_dir, 'fashion-resize-annotation-train.csv') #pose annotation path
-save_path = os.path.join(img_dir, 'trainK')
+annotations_file = os.path.join(img_dir, 'fashion-resize-annotation-test-web.csv') #pose annotation path
+save_path = os.path.join(img_dir, 'testK')
 if not os.path.exists(save_path):
     os.makedirs(save_path)
 
@@ -26,7 +26,7 @@ def cords_to_map(cords, img_size, sigma=6):
         # result[..., i] = np.where(((yy - point[0]) ** 2 + (xx - point[1]) ** 2) < (sigma ** 2), 1, 0)
     return result
 
-def compute_pose(image_dir, annotations_file, savePath, sigma):
+def compute_pose(image_dir, annotations_file, savePath, sigma=6):
     annotations_file = pd.read_csv(annotations_file, sep=':')
     annotations_file = annotations_file.set_index('name')
     image_size = (256, 176)
@@ -42,7 +42,4 @@ def compute_pose(image_dir, annotations_file, savePath, sigma):
         np.save(file_name, pose)
         # input()
   
-compute_pose(img_dir, annotations_file, save_path,6)
-
-
-
+#compute_pose(img_dir, annotations_file, save_path,6)

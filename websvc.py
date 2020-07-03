@@ -4,7 +4,7 @@ from flask import Flask
 from test import run
 from options.test_options import TestOptions
 
-from tool import compute_coordinates
+from tool import compute_coordinates, generate_pose_map_fashion
 from util import util
 
 app = Flask(__name__)
@@ -16,7 +16,7 @@ def hello_world():
 @app.route('/test')
 def test_model():
   opt = TestOptions().parse()
-
+  '''
   p1_file = '01_4_full.jpg'
   p2_file = '03_4_full.jpg'
 
@@ -32,13 +32,16 @@ def test_model():
   crp2.save(os.path.join('./deepfashion/test', p2_file))
 
   # coordinates
-  compute_coordinates.compute('./deepfashion/test/', [p1_file, p2_file], './deepfashion/fasion-resize-annotation-test-web.csv')
+  compute_coordinates.computeR('./deepfashion/test/', [p1_file, p2_file], './deepfashion/fashion-resize-annotation-test-web.csv')
+
+  # pose
+  generate_pose_map_fashion.compute_pose('./deepfashion', './deepfashion/fashion-resize-annotation-test-web.csv', './deepfashion/testK')
 
   # pairs
-  with open('./deepfashion/fasion-resize-pairs-test-web.csv', 'w') as pair_file:
+  with open('./deepfashion/fashion-resize-pairs-test-web.csv', 'w') as pair_file:
       pair_file.write('from,to' + '\n')
       pair_file.write('{},{}'.format(p1_file, p2_file) + '\n')
-
+  '''
   # run test
   opt.dataroot = './deepfashion/'
   opt.name = 'fashion_adgan_test'
@@ -49,9 +52,11 @@ def test_model():
   opt.resize_or_crop = 'no'
   opt.gpu_ids = 0,
   opt.BP_input_nc = 18
+  #opt.SP_input_nc = 18
   opt.which_model_netG = 'ADGen'
   opt.checkpoints_dir = './checkpoints'
-  opt.pairLst = './deepfashion/fasion-resize-pairs-test-web.csv'
+  # opt.pairLst = './deepfashion/fashion-resize-pairs-test-web.csv'
+  opt.pairLst = './deepfashion/fashion-resize-pairs-test-small.csv'
   opt.which_epoch = '80'
   opt.results_dir = './results'
   opt.nThreads = 1   # test code only supports nThreads = 1

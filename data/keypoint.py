@@ -8,6 +8,7 @@ import random
 import pandas as pd
 import numpy as np
 import torch
+import re
 
 
 class KeyDataset(BaseDataset):
@@ -87,10 +88,19 @@ class KeyDataset(BaseDataset):
             P1 = self.transform(P1_img)
             P2 = self.transform(P2_img)
 
+        pattern = 'fashion|WOMEN|MEN|Denim|Jackets_Vests|Pants|Shirts_Polos|Shorts|Suiting|Sweaters|Sweatshirts_Hoodies|Tees_Tanks|Blouses_Shirts|Cardigans|Denim|Dresses|Graphic_Tees|Jackets_Coats|Leggings|Pants|Rompers_Jumpsuits|Shorts|Skirts|Sweaters|Sweatshirts_Hoodies|Tees_Tanks|.*'
         # segmentation
-        SP1_name = self.split_name(P1_name, 'semantic_merge3')
-        SP1_path = os.path.join(self.dir_SP, SP1_name)
-        SP1_path = SP1_path[:-4] + '.npy'
+        #SP1_name = self.split_name(P1_name, 'semantic_merge3')
+        #SP1_path = os.path.join(self.dir_SP, SP1_name)
+        #SP1_path = SP1_path[:-4] + '.npy'
+
+        # Правильной размерности (256, 176)
+        SP1_name = re.findall(pattern, P1_name)
+        id_name = SP1_name[3][:10].replace('id0', 'id_0')
+        file_name = SP1_name[3][10:][:4] + '_' + SP1_name[3][10:][4:].replace('.jpg', '.npy')
+        SP1_path = os.path.join('./deepfashion/semantic_merge3/', SP1_name[1], SP1_name[2], id_name, file_name)
+        # Неправильной размерности  (256, 176, 18)!
+        # SP1_path = os.path.join('./deepfashion/testK/', P1_name + '.npy')
         SP1_data = np.load(SP1_path)
         SP1 = np.zeros((self.SP_input_nc, 256, 176), dtype='float32')
         for id in range(self.SP_input_nc):
