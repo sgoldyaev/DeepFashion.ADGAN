@@ -7,6 +7,7 @@ fashion/**/
 fashion_data/**/
 user_data/*
 results/*
+templates/fashion_adgan_test/*
 env/
 .vscode/
 */__pycache__/*

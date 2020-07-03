@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <title>Python Flask Bucket List App</title>
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+ </head>
+ <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+ <script type=text/javascript>
+         $(function() {
+           $('button#test').bind('click', function() {
+             $.getJSON('/test',
+                 function(data) {
+                     alert('success')
+                     $('#results').style.visibility = "visible"
+               //do nothing
+             });
+             return false;
+           });
+         });
+ </script> 
+<body>
+ 
+    <div class="container">
+        <div class="jumbotron">
+            <h1>DLS2020 DeepFashion (by sgoldyaev)</h1>
+            <p class="lead"></p>
+        </div>
+ 
+        <div class="row marketing">
+            <div class="col-lg-6">
+                <h4>Run Test</h4>
+                <p><button type="submit" id="test">RUN</button></p>
+                <p><a id="results" style="visibility: hidden;" href="/results">Get Results</p> 
+            </div> 
+        </div>
+ 
+        <footer class="footer">
+            <p>&copy; Deep Learning School 2020</p>
+        </footer>
+ 
+    </div>
+</body>
+ 
+</html>

@@ -1,6 +1,6 @@
 import os
 from PIL import Image
-from flask import Flask
+from flask import Flask, render_template, send_file
 from test import run
 from options.test_options import TestOptions
 
@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-  return 'DeepFashion.MIPT! (by sgoldyaev for DLS2020)'
+  return render_template('index.html')
 
 @app.route('/test')
 def test_model():
@@ -58,7 +58,8 @@ def test_model():
   # opt.pairLst = './deepfashion/fashion-resize-pairs-test-web.csv'
   opt.pairLst = './deepfashion/fashion-resize-pairs-test-small.csv'
   opt.which_epoch = '80'
-  opt.results_dir = './results'
+  #opt.results_dir = './results'
+  opt.results_dir = './templates'
   opt.nThreads = 1   # test code only supports nThreads = 1
   opt.batchSize = 1  # test code only supports batchSize = 1
   opt.serial_batches = True  # no shuffle
@@ -67,6 +68,14 @@ def test_model():
   printArgs(opt)
   run(opt)
   return 'success'
+
+@app.route("/results")
+def getResults():
+  return render_template('fashion_adgan_test/test_80/index.html', forward_message='success')
+
+@app.route("/images/<image>")
+def getImage(image):
+  return send_file(os.path.join ('./templates/fashion_adgan_test/test_80/images', image), mimetype='image/jpg')
 
 def printArgs(opt):
     args = vars(opt)
