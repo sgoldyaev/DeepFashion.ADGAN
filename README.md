@@ -58,5 +58,5 @@ https://arxiv.org/pdf/1705.09368.pdf Базовая архитектура
 
 https://arxiv.org/pdf/2003.12267.pdf Имплементированная архитектура
 <p float="center">
-<img src="gif/final_project_architecture_impl.png" width="800px"/>
+<img src="gif/final_project_architecture_impl.PNG" width="800px"/>
 </p>
