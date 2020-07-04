@@ -196,14 +196,18 @@ def compute(input_folder, img_list, output_path):
     boxsize = 368
     scale_search = [0.5, 1, 1.5, 2]
 
+    print ('read output_path:', output_path)
+
+    linesCount = 0
+    processed_names = set()
+
     if os.path.exists(output_path):
         os.remove(output_path)
 
-    processed_names = set()
     result_file = open(output_path, 'w')
     print ('name:keypoints_y:keypoints_x', file=result_file)
 
-    # for image_name in tqdm(os.listdir(input_folder)):
+    #for image_name in tqdm(os.listdir(input_folder)):
     for image_name in tqdm(img_list):
         if image_name in processed_names:
             continue
