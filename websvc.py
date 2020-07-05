@@ -1,6 +1,6 @@
 import os
 from PIL import Image
-from flask import Flask, render_template, send_file
+from flask import Flask, render_template, send_file, request, redirect, url_for
 from test import run
 from options.test_options import TestOptions
 
@@ -12,6 +12,36 @@ app = Flask(__name__)
 @app.route('/')
 def hello_world():
   return render_template('index.html')
+
+@app.route('/mock', methods=['GET', 'POST'])
+def mock_model():
+  if request.method == 'POST' and 'file1' in request.files and 'file2' in request.files:
+    p1_http_file = request.files['file1']
+    p2_http_file = request.files['file2']
+
+    p1_file = 'input_01.jpg' # p1_http_file.filename
+    p2_file = 'input_02.jpg' # p2_http_file.filename
+
+    p1_http_file.save(os.path.join('./user_data', p1_file))
+    p2_http_file.save(os.path.join('./user_data', p2_file))
+    
+    img1 = Image.open(os.path.join('./user_data', p1_file))
+    if (img1.size != (176, 256)):
+      img1 = img1.resize((256, 256))
+      img1 = img1.crop((40, 0, 256-40, 256))
+    img1.save(os.path.join('./deepfashion/test', p1_file))
+
+    img2 = Image.open(os.path.join('./user_data', p2_file))
+    if (img2.size != (176, 256)):
+      img2 = img1.resize((256, 256))
+      img2 = img2.crop((40, 0, 256-40, 256))
+    img2.save(os.path.join('./deepfashion/test', p2_file))
+
+    return redirect(url_for('getResults'))
+
+  else:
+    return {'message': 'ops!'}
+
 
 @app.route('/test')
 def test_model():
