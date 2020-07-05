@@ -29,16 +29,17 @@
 |Куратор этапа 1|Яровиков Юрий|@yu_rovikov|		
 |Куратор этапа 2|||		
 
-## TODO list
+## TODO
 
 |Наименование|Текущий статус|
 |------------|--------------|
 |Vanila GAN|Done|
 |InfoGAN|Done|
 |Style Transfer|Done|
-|Идентифицировать позу человека на фотографии (18 keypoints heatmap)||	
-|Сегментировать человека и фон||	
-|Pose Mask Loss||	
+|Human Pose (18 keypoints with heatmap)|Done|	
+|Instance segmentation (<8 layers)|Poor|	
+|HiRes GAN|None|
+|Inference Style Codes|None|
 
 ## Datasets
 
@@ -60,3 +61,55 @@ https://arxiv.org/pdf/2003.12267.pdf Имплементированная арх
 <p float="center">
 <img src="gif/final_project_architecture_impl.PNG" width="800px"/>
 </p>
+
+## Результаты
+
+Модель из данной работы была обучена на DeepFashion Datset. Приложенные веса оказались необучены и модель выдавала такие результаты.
+<p float="center">
+<img src="gif/results_first_run.jpg" width="800px"/>
+</p>
+
+После обучениия на 80 эпохах результат стал заметно лучше, в целевой картинке легко угадываются поза и перенесенные атрибуты.
+<p float="center">
+<img src="gif/results_sm3.jpg" width="800px"/>
+</p>
+
+Встал вопрос, можно ли эту модель использовать для новых данных (не из датасета). Почти сразу выяснилось, что в исходниках отсутствует компонент отвечающий за segmentation map - карта с размеченными сегментами. Без проблем добавлен предобученный torchvision.models.detection.maskrcnn_resnet50_fpn. И получен мгновенный результат.
+<p float="center">
+<img src="gif/results_maskrcnn.jpg" width="800px"/>
+</p>
+
+И тут выяснилось что уровень сегментации из maskrcnn_resnet50_fpn для подобной задачи не подходит. Вот так выглядит segmentation map из набора размеченных данных DeepFashion Dataset и вычисленный maskrcnn_resnet50 (всего один слой, prediction > 0.7). Понятно что в таком случае перед моделью встанет задача переноса ровно одного стиля (человека+волос+одежды и т.д.). Необходимо срочно решить задачу instance segmentation.
+<p float="center">
+<img src="gif/segmentation_gt_mask.png" width="100px"/>
+<img src="gif/segmentation_my_mask.png" width="100px"/>
+</p>
+
+Занятно другое, если обучить модель до 400 эпох (напомню пред результаты мы смотрели на 80 эпохах), то результат будет вполне приемлимым даже при наличии 1 segmentation mask. 
+<p float="center">
+<img src="gif/results_maskrcnn_400_1.jpg" width="800px"/>
+<img src="gif/results_maskrcnn_400_2.jpg" width="800px"/>
+</p>
+
+Для сравнения, вот так выглядит перенос стиля при наличии 8 segmentation masks на моделе обученной до 400 эпох.
+<p float="center">
+<img src="gif/results_sm3_400_1.jpg" width="800px"/>
+<img src="gif/results_sm3_400_2.jpg" width="800px"/>
+</p>
+
+Так же анализ результатов показывает в каких случаях получается хороший и плохой результат.
+|Плохо|Картинка|
+|-----|--------|
+|Если в исходной картинке пристуствует только часть позы от целевой картинки. Т.к. модель просто не знает откуда брать|<img src="gif/epoch394_vis.png">|
+|Тоже самое справедливо и "вид со спины".|<img src="gif/epoch369_vis.png">|
+|Совсем плохие результаты получаются с замысловатыми позами или где руки скрыты за телом.|<img src="gif/epoch380_vis.png">|
+|Плохо переносятся сложные рисунки на одежде.|<img src="gif/epoch377_vis.png">|
+
+Есть и положительные кейсы
+|Хорошо|Картинка|
+|------|--------|
+|Если в исходной картинке количество pose keypoints больше или не меньше чем в целевой |<img src="gif/epoch370_vis.png">|
+|Хорошо переносится одежда с простыми принтами|<img src="gif/epoch384_vis.png">|
+
+
+To be continue ...

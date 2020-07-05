@@ -9,7 +9,7 @@ img1 = Image.open('./deepfashion/my/02_7_additional_orig.jpg')
 crp1 = img1.crop((0+40, 0, 256-40, 256))
 crp1.save('./deepfashion/my/02_7_additional.jpg')
 
-compute_coordinates.compute('./deepfashion/my/', ['02_7_additional.jpg'], './deepfashion/my_results/fashion-resize-annotation-my.csv')
+#compute_coordinates.compute('./deepfashion/my/', ['02_7_additional.jpg'], './deepfashion/my_results/fashion-resize-annotation-my.csv')
 compute_segments.compute('./deepfashion/my/', ['02_7_additional.jpg'], './deepfashion/my_results')
 #generate_pose_map_fashion.compute_pose('./deepfashion/my/', './deepfashion/my_results/fashion-resize-annotation-my.csv', './deepfashion/my_results')
 
@@ -39,8 +39,17 @@ my_target.save('./deepfashion/my_results/my_target.png', 'PNG')
 my_npy = np.load('./deepfashion/my_results/02_7_additional.jpg.npy')
 gt_npy = np.load('./deepfashion/gt_results/02_7_additional.npy')
 
-gt_df = pd.DataFrame(data=gt_npy)
-gt_df.to_csv ('./deepfashion/my_results/gt_npy.csv')
+# gt_df = pd.DataFrame(data=gt_npy)
+# gt_df.to_csv ('./deepfashion/my_results/gt_npy.csv')
 
-my_df = pd.DataFrame(data=my_npy)
-my_df.to_csv ('./deepfashion/my_results/my_npy.csv')
+# my_df = pd.DataFrame(data=my_npy)
+# my_df.to_csv ('./deepfashion/my_results/my_npy.csv')
+
+matrix = (0,0,0,.5, 0,.2,.5,.3, 1,0,0,0)
+matrix = (.3, .5, .3, 1)
+
+gt_mask = Image.fromarray(np.uint8(255 * (gt_npy/gt_npy.max()))).convert('RGB').convert('RGB', matrix)
+gt_mask.save('./deepfashion/my_results/gt_mask.png')
+
+my_mask = Image.fromarray(np.uint8(255 * (my_npy/my_npy.max()))).convert('RGB').convert('RGB', matrix)
+my_mask.save('./deepfashion/my_results/my_mask.png')

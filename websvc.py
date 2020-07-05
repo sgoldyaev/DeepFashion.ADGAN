@@ -1,4 +1,6 @@
 import os
+import uuid
+
 from PIL import Image
 from flask import Flask, render_template, send_file, request, redirect, url_for
 from test import run
@@ -13,44 +15,21 @@ app = Flask(__name__)
 def hello_world():
   return render_template('index.html')
 
-@app.route('/mock', methods=['GET', 'POST'])
-def mock_model():
+@app.route('/test', methods=['GET', 'POST'])
+def test_model():
+  
+  p1_file = 'p1_{}.jpg'.format(uuid.uuid1()) # p1_http_file.filename
+  p2_file = 'p2_{}.jpg'.format(uuid.uuid1()) # p2_http_file.filename
+
+  # input
   if request.method == 'POST' and 'file1' in request.files and 'file2' in request.files:
     p1_http_file = request.files['file1']
     p2_http_file = request.files['file2']
 
-    p1_file = 'input_01.jpg' # p1_http_file.filename
-    p2_file = 'input_02.jpg' # p2_http_file.filename
-
     p1_http_file.save(os.path.join('./user_data', p1_file))
     p2_http_file.save(os.path.join('./user_data', p2_file))
-    
-    img1 = Image.open(os.path.join('./user_data', p1_file))
-    if (img1.size != (176, 256)):
-      img1 = img1.resize((256, 256))
-      img1 = img1.crop((40, 0, 256-40, 256))
-    img1.save(os.path.join('./deepfashion/test', p1_file))
-
-    img2 = Image.open(os.path.join('./user_data', p2_file))
-    if (img2.size != (176, 256)):
-      img2 = img1.resize((256, 256))
-      img2 = img2.crop((40, 0, 256-40, 256))
-    img2.save(os.path.join('./deepfashion/test', p2_file))
-
-    return redirect(url_for('getResults'))
-
   else:
-    return {'message': 'ops!'}
-
-
-@app.route('/test')
-def test_model():
-  opt = TestOptions().parse()
-  
-  p1_file = '01_4_full.jpg'
-  p2_file = '03_4_full.jpg'
-
-  # input
+    return {'message': 'Необходимы картинки 176x256'}
 
   # crop and copy
   img1 = Image.open(os.path.join('./user_data', p1_file))
@@ -74,8 +53,10 @@ def test_model():
   with open('./deepfashion/fashion-resize-pairs-test-web.csv', 'w') as pair_file:
       pair_file.write('from,to' + '\n')
       pair_file.write('{},{}'.format(p1_file, p2_file) + '\n')
-  
+      pair_file.write('{},{}'.format(p2_file, p1_file) + '\n')
+
   # run test
+  opt = TestOptions().parse()
   opt.dataroot = './deepfashion/'
   opt.name = 'fashion_adgan_test'
   opt.model = 'adgan'
@@ -90,7 +71,7 @@ def test_model():
   opt.checkpoints_dir = './checkpoints'
   opt.pairLst = './deepfashion/fashion-resize-pairs-test-web.csv'
   # opt.pairLst = './deepfashion/fashion-resize-pairs-test-small.csv'
-  opt.which_epoch = '80'
+  opt.which_epoch = '400'
   #opt.results_dir = './results'
   opt.results_dir = './templates'
   opt.nThreads = 1   # test code only supports nThreads = 1
@@ -100,15 +81,15 @@ def test_model():
 
   printArgs(opt)
   run(opt)
-  return 'success'
+  return redirect(url_for('getResults'))
 
-@app.route("/results")
+@app.route('/results')
 def getResults():
-  return render_template('fashion_adgan_test/test_80/index.html', forward_message='success')
+  return render_template('fashion_adgan_test/test_400/index.html', forward_message='success')
 
-@app.route("/images/<image>")
+@app.route('/images/<image>')
 def getImage(image):
-  return send_file(os.path.join ('./templates/fashion_adgan_test/test_80/images', image), mimetype='image/jpg')
+  return send_file(os.path.join ('./templates/fashion_adgan_test/test_400/images', image), mimetype='image/jpg')
 
 def printArgs(opt):
     args = vars(opt)
