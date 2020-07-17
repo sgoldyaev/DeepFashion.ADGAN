@@ -112,4 +112,10 @@ https://arxiv.org/pdf/2003.12267.pdf Имплементированная арх
 |Хорошо переносится одежда с простыми принтами|<img src="gif/epoch384_vis.png">|
 
 
+Web Service
+<a href="http://194.135.112.200:5000/">http://194.135.112.200:5000/</a>
+
+Sample
+<a href="samples">images</a>
+
 To be continue ...
